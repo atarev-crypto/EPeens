@@ -19,6 +19,7 @@ contract EPeens is ERC721Enumerable, Ownable {
     mapping(uint256 => uint256) internal seeds;
     IEPeenDescriptor public descriptor;
     uint256 public maxSupply = 10000;
+    uint256 public mintFeeWei = 1000000000000000000;
     bool public minting = false;
     bool public canUpdateSeed = true;
 
@@ -29,6 +30,7 @@ contract EPeens is ERC721Enumerable, Ownable {
     function mint(uint32 count) external payable {
         require(minting, "Minting needs to be enabled to start minting");
         require(count < 101, "Exceeds max per transaction.");
+        require(msg.value >= mintFeeWei * count, "Not enough ETH sent, check price");
         uint256 nextTokenId = _owners.length;
         unchecked {
             require(nextTokenId + count < maxSupply, "Exceeds max supply.");
